@@ -1,4 +1,4 @@
-# Лабораторная работа 2 — NLP для прототипа автоматизации кредитных одобрений
+# Лабораторная работа 2: NLP 
 
 ## Идея проекта
 
@@ -16,50 +16,6 @@
 - Скрипты подготовки данных, обучения моделей и оценки пайплайна
 - Исследовательский отчёт по метрикам `accuracy`, `precision`, `recall`, `f1`
 - Полная docstring-документация функций
-
-## Структура проекта
-
-```text
-credit_lab_project/
-├── docker-compose.yml
-├── README.md
-├── .env.example
-├── artifacts/
-│   ├── models/
-│   └── reports/
-├── data/
-│   ├── raw/
-│   └── processed/
-├── llm_service/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   └── app/
-│       ├── main.py
-│       ├── ollama_client.py
-│       ├── parsers.py
-│       ├── prompts.py
-│       └── schemas.py
-├── mcp_service/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   └── app/
-│       ├── main.py
-│       ├── mcp_server.py
-│       ├── mcp_client.py
-│       ├── llm_client.py
-│       ├── ml_tools.py
-│       ├── inference.py
-│       ├── schemas.py
-│       └── config.py
-├── scripts/
-│   ├── prepare_data.py
-│   ├── train_models.py
-│   ├── evaluate_pipeline.py
-│   ├── smoke_test.py
-│   └── common.py
-└── artifacts/reports/
-    └── research_report.md
-```
 
 ## Пошаговый запуск
 
@@ -80,15 +36,13 @@ cd credit_lab_project
 cp .env.example .env
 ```
 
-Для текущего проекта это необязательно, так как значения по умолчанию уже прописаны в `docker-compose.yml`.
-
 ### 4. Подготовить датасет и обучить модели
 
 Локально, вне Docker:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Linux / macOS
+source .venv/bin/activate 
 pip install -r scripts/requirements.txt
 python scripts/prepare_data.py
 python scripts/train_models.py
