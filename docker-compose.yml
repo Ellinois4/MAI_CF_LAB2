@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_started
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "sleep 10 &&
+      OLLAMA_HOST=http://ollama:11434 ollama pull qwen2.5:0.5b"
+    restart: "no"
+
+  llm-service:
+    build:
+      context: ./llm_service
+    container_name: llm-service
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: qwen2.5:0.5b
+    depends_on:
+      ollama:
+        condition: service_started
+      ollama-init:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+
+  mcp-service:
+    build:
+      context: ./mcp_service
+    container_name: mcp-service
+    environment:
+      LLM_SERVICE_URL: http://llm-service:8000
+      MODEL_DIR: /app/models
+    depends_on:
+      llm-service:
+        condition: service_started
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./artifacts/models:/app/models
+
+volumes:
+  ollama_data:
